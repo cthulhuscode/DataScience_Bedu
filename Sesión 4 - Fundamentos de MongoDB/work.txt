@@ -1,0 +1,51 @@
+                             Sesión 4 - Fundamentos de MongoDB
+
+//
+//   RETO 1
+//
+
+1. Fecha, nombre y texto de cada comentario.
+Project
+{"date":1, "name": 1, "text": 1}
+
+2. Título, elenco y año de cada película.
+Project
+{"title":1, "cast": 1, "year": 1}
+
+
+3. Nombre y contraseña de cada usuario.    
+Project
+{"name":1, "password": 1}       
+
+//
+//   RETO 2
+//
+
+1. ¿Qué comentarios ha hecho Greg Powell?
+Filter
+{"name": "Greg Powell"}
+
+2. ¿Qué comentarios han hecho Greg Powell o Mercedes Tyler?
+Filter
+{$or: [{"name": "Greg Powell"}, {"name": "Mercedes Tyler"}]}
+
+3. ¿Cuál es el máximo número de comentarios en una película?
+Project
+{"num_mflix_comments": 1}
+
+Sort
+{"num_mflix_comments": -1}
+
+Limit 
+1
+
+4. ¿Cuál es título de las cinco películas más comentadas?
+Project
+{"title": 1,"num_mflix_comments": 1}
+
+Sort 
+{"num_mflix_comments": -1}
+
+Limit 
+5
+
