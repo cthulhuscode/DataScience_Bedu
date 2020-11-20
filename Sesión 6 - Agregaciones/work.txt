@@ -1,0 +1,104 @@
+                             Sesión 6 - Agregaciones
+
+//
+//   RETO 1 - Agrupaciones
+//
+
+Con base en el ejemplo 1, modifica el agrupamiento para que muestre el costo
+promedio por habitación por país de las propiedades de tipo casa.
+
+[{
+    $match: {
+        property_type: "House",
+        bedrooms: {
+            $gte: 1
+        }
+    }
+}, {
+    $addFields: {
+        costo_recamara: {
+            $divide: ["$price", "$bedrooms"]
+        }
+    }
+}, {
+    $group: {
+        _id: "$address.country",
+        costo_total: {
+            $sum: "$costo_recamara"
+        },
+        count: {
+            $sum: 1
+        }
+    }
+}, {
+    $addFields: {
+        pais: "$_id",
+        costoPromedioHabitacion: {
+            $round: [{
+                $divide: ["$costo_total", "$count"]
+            }, 2]
+        }
+    }
+}, {
+    $project: {
+        _id: 0,
+        pais: 1,
+        costoPromedioHabitacion: 1
+    }
+}, {
+    $sort: {
+        costoPromedioHabitacion: -1
+    }
+}]
+
+
+//
+//   RETO 2 - Asociación de colecciones
+//
+
+Usando las colecciones comments y users, se requiere conocer el correo
+y contraseña de cada persona que realizó un comentario. 
+Construye un pipeline que genere como resultado estos datos.
+
+[{
+    $match: {
+        text: {
+            $ne: null
+        }
+    }
+}, {
+    $lookup: {
+        from: 'users',
+        localField: 'email',
+        foreignField: 'email',
+        as: 'userDoc'
+    }
+}, {
+    $addFields: {
+        userObject: {
+            $arrayElemAt: ["$userDoc", 0]
+        }
+    }
+}, {
+    $addFields: {
+        password: "$userObject.password",
+    }
+}, {
+    $project: {
+        userDoc: 0,
+        userObject: 0,
+        _id: 0,
+        date: 0,
+        movie_id: 0
+    }
+}]
+
+
+//
+//   RETO 3 - Vistas
+//
+
+Usando el pipeline que generaste en el Reto 2, genera la vista correspondiente.
+
+
+

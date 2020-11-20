@@ -1,0 +1,94 @@
+                             Sesión 5 - Fundamentos de MongoDB
+
+
+                             
+//
+//   RETO 1 - Expresiones regulares
+//
+
+Usando la base de datos sample_airbnblistingsAndReviews, realiza los siguientes filtros:
+1. Propiedades que no permitan fiestas.
+FILTER
+{house_rules: /Not? (Party|Parties|Partys)/i}
+
+2. Propiedades que admitan mascotas.
+FILTER
+{house_rules: { $not: /not? pets?/i}}
+
+3. Propiedades que no permitan fumadores.
+FILTER
+{house_rules: /(no|not|non) (Smoke|Smoking)/i}
+
+4. Propiedades que no permitan fiestas ni fumadores.
+FILTER
+{$and: [{house_rules: /(no|not|non) (Smoke|Smoking)/i}, {house_rules: /Not? (Party|Parties|Partys)/i} ] }
+
+
+
+//
+//   RETO 2 - Notación punto y arreglos
+//
+
+    Usando la colección sample_airbnb.listingsAndReviews, 
+    agrega un filtro que permita obtener todas las publicaciones
+    que tengan 50 o más comentarios, que la valoración sea mayor
+    o igual a 80, que cuenten con conexión a Internet vía cable
+    y estén ubicada en Brazil.
+
+FILTER
+{number_of_reviews: {$gte: 50 }, "review_scores.review_scores_rating": {$gte: 80}, amenities: { $in: [/internet|ethernet/i] } , "address.country": /Brazil|Brasil/i }
+
+PROJECT
+{number_of_reviews: 1, "review_scores.review_scores_rating": 1, amenities: 1, "address.country":1}
+
+//
+//   RETO 3 - Introducción a las agregaciones
+//
+
+  Usando la colección sample_airbnb.listingsAndReviews, 
+  mediante el uso de agregaciones, encontrar el número de publicaciones
+  que tienen conexión a Internet, sea desde Wifi o desde cable (Ethernet).
+
+  [
+    {
+      $match: {
+        amenities: {
+          $in: [/internet|ethernet|wifi|wi-fi/i]
+        }
+      } 
+    }, 
+    {
+      $project: {
+        name: 1,
+        amenities: 1,
+        _id: 0
+    }
+  }, {
+      $count: 'Número de casas con internet'
+    }
+  ]
+
+
+
+
+// OTROS EJERCICIOS EN CLASE
+
+{ "address.country_code": "ES", "review_scores.review_scores_rating": { $gte: 50 }, $and: [ { amenities: { $in: ["Wifi", "Internet"] } }, { amenities: { $in: ["Elevator"] } } ], price: { $lte: 100 } }
+
+{ 
+    "address.country_code": "ES",
+    "review_scores.review_scores_rating": { $gte: 50 },
+    $and: [ 
+            { 
+                amenities: { 
+                    $in: ["Wifi", "Internet"] 
+                } 
+            },
+            { amenities: { 
+                    $in: ["Elevator"] 
+                } 
+            } 
+        ], 
+    price: { $lte: 100 } 
+}
+
